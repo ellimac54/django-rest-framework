@@ -6,6 +6,7 @@ from rest_framework import serializers
 
 class AuthTokenSerializer(serializers.Serializer):
     username = serializers.CharField(label=_("Username"))
+    email = serializers.CharField(label=_("Email"))
     password = serializers.CharField(
         label=_("Password"),
         style={'input_type': 'password'},
@@ -14,10 +15,11 @@ class AuthTokenSerializer(serializers.Serializer):
 
     def validate(self, attrs):
         username = attrs.get('username')
+        email = attrs.get('email')
         password = attrs.get('password')
 
         if username and password:
-            user = authenticate(username=username, password=password)
+            user = authenticate(username=username, email=email, password=password)
 
             if user:
                 # From Django 1.10 onwards the `authenticate` call simply
