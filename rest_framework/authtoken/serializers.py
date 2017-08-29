@@ -5,8 +5,8 @@ from rest_framework import serializers
 
 
 class AuthTokenSerializer(serializers.Serializer):
-    username = serializers.CharField(label=_("Username"))
-    email = serializers.CharField(label=_("Email"))
+    username = serializers.CharField(label=_("Username"), required=False)
+    email = serializers.CharField(label=_("Email"), required=False)
     password = serializers.CharField(
         label=_("Password"),
         style={'input_type': 'password'},
@@ -18,7 +18,7 @@ class AuthTokenSerializer(serializers.Serializer):
         email = attrs.get('email')
         password = attrs.get('password')
 
-        if username and password:
+        if (username or email) and password:
             user = authenticate(username=username, email=email, password=password)
 
             if user:
@@ -32,7 +32,7 @@ class AuthTokenSerializer(serializers.Serializer):
                 msg = _('Unable to log in with provided credentials.')
                 raise serializers.ValidationError(msg, code='authorization')
         else:
-            msg = _('Must include "username" and "password".')
+            msg = _('Must include "username" or "email" and "password".')
             raise serializers.ValidationError(msg, code='authorization')
 
         attrs['user'] = user
